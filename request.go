@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
 )
 
 const (
@@ -16,7 +15,7 @@ const (
 	contentTypeHeader = "content-type"
 )
 
-func (c *Controller) request(ctx context.Context, verb, URI, refSuffix string, payload, answer interface{}) (validity time.Duration, err error) {
+func (c *Controller) request(ctx context.Context, verb, URI string, payload, answer interface{}) (err error) {
 	var bodySource io.Reader
 	// Create payload if necessary
 	if payload != nil {
