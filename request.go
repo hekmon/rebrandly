@@ -7,12 +7,14 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"reflect"
 )
 
 const (
 	baseURL           = "https://api.rebrandly.com/v1"
-	jsonContentType   = "application/json"
+	jsonContentType   = "application/json; charset=utf-8"
 	contentTypeHeader = "content-type"
+	debug             = true
 )
 
 func (c *Controller) request(ctx context.Context, verb, URI string, payload, answer interface{}) (err error) {
@@ -36,10 +38,14 @@ func (c *Controller) request(ctx context.Context, verb, URI string, payload, ans
 		req = req.WithContext(ctx)
 	}
 	// Set headers
-	if payload != nil {
+	if payload != nil && !reflect.ValueOf(payload).IsNil() {
 		req.Header.Set(contentTypeHeader, jsonContentType)
 	}
 	req.Header.Set("apikey", c.apiKey)
+	// Last chance to inspect
+	if debug {
+		fmt.Printf("Rebrandly API| request:%+v\n", req)
+	}
 	// Execute
 	resp, err := c.client.Do(req)
 	if err != nil {
