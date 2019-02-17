@@ -1,6 +1,20 @@
 package rebrandly
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
+
+// DomainsGetByID return the domains details represented by id
+func (c *Controller) DomainsGetByID(id string) (domain Domain, err error) {
+	return c.DomainsGetByIDCtx(nil, id)
+}
+
+// DomainsGetByIDCtx return the domains details represented by id
+func (c *Controller) DomainsGetByIDCtx(ctx context.Context, id string) (domain Domain, err error) {
+	err = c.request(ctx, "GET", fmt.Sprintf("domains/%s", id), nil, &domain)
+	return
+}
 
 // DomainsCount returns the number of domains
 func (c *Controller) DomainsCount(active bool, domainType string) (nbDomains int, err error) {
