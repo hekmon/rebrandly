@@ -5,6 +5,17 @@ import (
 	"fmt"
 )
 
+// GetDomains returns the list of domains
+func (c *Controller) GetDomains(filters *DomainsQuery) (domains Domains, err error) {
+	return c.GetDomainsCtx(nil, filters)
+}
+
+// GetDomainsCtx returns the list of domains
+func (c *Controller) GetDomainsCtx(ctx context.Context, filters *DomainsQuery) (domains Domains, err error) {
+	err = c.request(ctx, "GET", "domains", filters, &domains)
+	return
+}
+
 // DomainsGetByID return the domains details represented by id
 func (c *Controller) DomainsGetByID(id string) (domain Domain, err error) {
 	return c.DomainsGetByIDCtx(nil, id)

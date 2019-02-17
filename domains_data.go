@@ -1,6 +1,50 @@
 package rebrandly
 
-import "time"
+import (
+	"encoding/json"
+	"fmt"
+	"reflect"
+	"time"
+)
+
+// DomainsQuery allows to configure a Domains query
+type DomainsQuery struct {
+	Active   *bool   `json:"active"`
+	Type     *string `json:"type"`
+	OrderBy  *string `json:"orderBy"`
+	OrderDir *string `json:"orderDir"`
+	Limit    *int    `json:"limit"`
+	Last     *string `json:"last"`
+}
+
+// MarshalJSON only marshal as JSON instanciate fields of DomainsQuery
+func (dq *DomainsQuery) MarshalJSON() (data []byte, err error) {
+	refType := reflect.TypeOf(*dq)
+	refValue := reflect.ValueOf(*dq)
+	tmp := make(map[string]interface{}, refType.NumField())
+	var (
+		field reflect.Value
+		key   string
+	)
+	for i := 0; i < refType.NumField(); i++ {
+		field = refValue.Field(i)
+		if field.IsNil() {
+			continue
+		}
+		key = refType.Field(i).Tag.Get("json")
+		switch typedValue := field.Elem().Interface().(type) {
+		case bool:
+			tmp[key] = typedValue
+		case string:
+			tmp[key] = typedValue
+		case int:
+			tmp[key] = typedValue
+		default:
+			err = fmt.Errorf("elem id %d with json key '%s' is not supported: %v", i, key, reflect.TypeOf(typedValue))
+		}
+	}
+	return json.Marshal(tmp)
+}
 
 // Domains represents a list domains
 type Domains []Domain
