@@ -14,7 +14,7 @@ const (
 	baseURL           = "https://api.rebrandly.com/v1"
 	jsonContentType   = "application/json; charset=utf-8"
 	contentTypeHeader = "content-type"
-	debug             = true
+	debug             = false
 )
 
 func (c *Controller) request(ctx context.Context, verb, URI string, payload, answer interface{}) (err error) {
