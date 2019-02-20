@@ -32,25 +32,28 @@ func (c *Controller) DomainsGetByID(id string) (domain Domain, err error) {
 // DomainsGetByIDCtx return the domains details represented by id
 func (c *Controller) DomainsGetByIDCtx(ctx context.Context, id string) (domain Domain, err error) {
 	url := *templateURL
-	url.Path += fmt.Sprintf("domains/%s", id)
+	url.Path += fmt.Sprintf("/domains/%s", id)
 	err = c.request(ctx, "GET", url, nil, &domain)
 	return
 }
 
 // DomainsCount returns the number of domains
-func (c *Controller) DomainsCount(active bool, domainType string) (nbDomains int, err error) {
-	return c.DomainsCountCtx(nil, active, domainType)
+func (c *Controller) DomainsCount(filters *DomainsCountQuery) (nbDomains int, err error) {
+	return c.DomainsCountCtx(nil, filters)
 }
 
 // DomainsCountCtx returns the number of domains
-func (c *Controller) DomainsCountCtx(ctx context.Context, active bool, domainType string) (nbDomains int, err error) {
+func (c *Controller) DomainsCountCtx(ctx context.Context, filters *DomainsCountQuery) (nbDomains int, err error) {
+	query, err := convertStructToURLQuery(filters)
+	if err != nil {
+		err = fmt.Errorf("can't convert filters to query params: %v", err)
+		return
+	}
 	var resp domainCountResponse
 	url := *templateURL
-	url.Path += "domains/count"
-	if err = c.request(ctx, "GET", url, domainCountQuery{
-		Active: active,
-		Type:   domainType,
-	}, &resp); err != nil {
+	url.Path += "/domains/count"
+	url.RawQuery = query.Encode()
+	if err = c.request(ctx, "GET", url, nil, &resp); err != nil {
 		return
 	}
 	nbDomains = resp.Count

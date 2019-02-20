@@ -8,21 +8,21 @@ import (
 // https://developers.rebrandly.com/docs/domains-list-endpoint
 type DomainsQuery struct {
 	Active   *bool                 `urlQuery:"active"`
-	Type     *DomainsQueryType     `urlQuery:"type"`
+	Type     *DomainsType          `urlQuery:"type"`
 	OrderBy  *DomainsQueryOrderBy  `urlQuery:"orderBy"`
 	OrderDir *DomainsQueryOrderDir `urlQuery:"orderDir"`
 	Limit    *int                  `urlQuery:"limit"`
 	Last     *string               `urlQuery:"last"`
 }
 
-// DomainsQueryType represent a type within a DomainsQuery
-type DomainsQueryType string
+// DomainsType represent a domain type
+type DomainsType string
 
 const (
-	// DomainsQueryTypeUser represents the "user" type for a DomainsQueryType
-	DomainsQueryTypeUser DomainsQueryType = "user"
-	// DomainsQueryTypeService represents the "service" type for DomainsQueryType
-	DomainsQueryTypeService DomainsQueryType = "service"
+	// DomainsQueryTypeUser represents the "user" type for a DomainsType
+	DomainsQueryTypeUser DomainsType = "user"
+	// DomainsQueryTypeService represents the "service" type for DomainsType
+	DomainsQueryTypeService DomainsType = "service"
 )
 
 // DomainsQueryOrderBy represent a given ordering for a DomainsQuery.
@@ -46,6 +46,12 @@ const (
 	// DomainsQueryOrderDirAsc represents the "asc" sorting direction for a DomainsQueryOrderDir
 	DomainsQueryOrderDirAsc DomainsQueryOrderDir = "asc"
 )
+
+// DomainsCountQuery represents the filer usable within a DomainsCount request
+type DomainsCountQuery struct {
+	Active *bool        `urlQuery:"active"`
+	Type   *DomainsType `urlQuery:"active"`
+}
 
 // Domains represents a list domains
 type Domains []Domain
