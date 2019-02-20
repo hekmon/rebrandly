@@ -38,8 +38,11 @@ func (c *Controller) request(ctx context.Context, verb, URI string, payload, ans
 		req = req.WithContext(ctx)
 	}
 	// Set headers
-	if payload != nil && !reflect.ValueOf(payload).IsNil() {
+	if payload != nil && (reflect.ValueOf(payload).Kind() != reflect.Ptr || !reflect.ValueOf(payload).IsNil()) {
 		req.Header.Set(contentTypeHeader, jsonContentType)
+	}
+	if workspace := c.GetWorkspace(); workspace != "" {
+		req.Header.Set("workspace", workspace)
 	}
 	req.Header.Set("apikey", c.apiKey)
 	// Last chance to inspect
