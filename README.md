@@ -21,7 +21,7 @@ link, err := rebapi.LinksCreate(rebrandly.LinkCreationPayload{
 })
 ```
 
-Each endpoint supports golang contextes, just prefix Ctx to it: `rebapi.LinksCreateCtx(ctx, rebrandly.LinkCreationPayload{...`
+Each endpoint supports golang contextes, just suffix Ctx to it: `rebapi.LinksCreateCtx(ctx, rebrandly.LinkCreationPayload{...`
 
 ## Enpoints
 
