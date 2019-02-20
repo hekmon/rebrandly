@@ -14,5 +14,8 @@ type Error struct {
 }
 
 func (e Error) Error() string {
+	if len(e.Errors) > 0 {
+		return e.Errors[0].Verbose
+	}
 	return e.Message
 }
