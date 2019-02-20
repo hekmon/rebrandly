@@ -3,6 +3,7 @@ package rebrandly
 import (
 	"context"
 	"fmt"
+	"net/http"
 )
 
 // DomainsGet returns the list of domains
@@ -20,7 +21,7 @@ func (c *Controller) DomainsGetCtx(ctx context.Context, filters *DomainsFilters)
 	url := *templateURL
 	url.Path += "/domains"
 	url.RawQuery = query.Encode()
-	err = c.request(ctx, "GET", url, nil, &domains)
+	err = c.request(ctx, "GET", url, nil, &domains, nil)
 	return
 }
 
@@ -33,7 +34,7 @@ func (c *Controller) DomainsGetByID(id string) (domain Domain, err error) {
 func (c *Controller) DomainsGetByIDCtx(ctx context.Context, id string) (domain Domain, err error) {
 	url := *templateURL
 	url.Path += fmt.Sprintf("/domains/%s", id)
-	err = c.request(ctx, "GET", url, nil, &domain)
+	err = c.request(ctx, "GET", url, nil, &domain, []int{http.StatusNotFound})
 	return
 }
 
@@ -53,7 +54,7 @@ func (c *Controller) DomainsCountCtx(ctx context.Context, filters *DomainsCountF
 	url := *templateURL
 	url.Path += "/domains/count"
 	url.RawQuery = query.Encode()
-	if err = c.request(ctx, "GET", url, nil, &resp); err != nil {
+	if err = c.request(ctx, "GET", url, nil, &resp, nil); err != nil {
 		return
 	}
 	nbDomains = resp.Count

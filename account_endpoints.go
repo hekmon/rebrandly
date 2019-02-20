@@ -13,6 +13,6 @@ func (c *Controller) Account() (account Account, err error) {
 func (c *Controller) AccountCtx(ctx context.Context) (account Account, err error) {
 	url := *templateURL
 	url.Path += "/account"
-	err = c.request(ctx, "GET", url, nil, &account)
+	err = c.request(ctx, "GET", url, nil, &account, nil)
 	return
 }

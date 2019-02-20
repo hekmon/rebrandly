@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 )
 
 // LinksGet returns the list of links
@@ -21,7 +22,7 @@ func (c *Controller) LinksGetCtx(ctx context.Context, filters *LinksFilters) (li
 	url := *templateURL
 	url.Path += "/links"
 	url.RawQuery = query.Encode()
-	err = c.request(ctx, "GET", url, nil, &links)
+	err = c.request(ctx, "GET", url, nil, &links, []int{http.StatusNotFound})
 	return
 }
 
@@ -34,7 +35,7 @@ func (c *Controller) LinksGetByID(id string) (link Link, err error) {
 func (c *Controller) LinksGetByIDCtx(ctx context.Context, id string) (link Link, err error) {
 	url := *templateURL
 	url.Path += fmt.Sprintf("/links/%s", id)
-	err = c.request(ctx, "GET", url, nil, &link)
+	err = c.request(ctx, "GET", url, nil, &link, []int{http.StatusNotFound})
 	return
 }
 
@@ -54,7 +55,7 @@ func (c *Controller) LinksCountCtx(ctx context.Context, filters *LinksCountFilte
 	url := *templateURL
 	url.Path += "/links/count"
 	url.RawQuery = query.Encode()
-	if err = c.request(ctx, "GET", url, nil, &resp); err != nil {
+	if err = c.request(ctx, "GET", url, nil, &resp, nil); err != nil {
 		return
 	}
 	nbLinks = resp.Count
@@ -76,6 +77,6 @@ func (c *Controller) LinksCreateCtx(ctx context.Context, payload LinkCreationPay
 	}
 	url := *templateURL
 	url.Path += "/links"
-	err = c.request(ctx, "POST", url, payload, &link)
+	err = c.request(ctx, "POST", url, payload, &link, []int{http.StatusForbidden, http.StatusNotFound})
 	return
 }

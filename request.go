@@ -37,7 +37,7 @@ func init() {
 	}
 }
 
-func (c *Controller) request(ctx context.Context, verb string, URL url.URL, payload, answer interface{}) (err error) {
+func (c *Controller) request(ctx context.Context, verb string, URL url.URL, payload, answer interface{}, supportedErrors []int) (err error) {
 	var bodySource io.Reader
 	// Create payload if necessary
 	payloadUsable := payload != nil && (reflect.ValueOf(payload).Kind() != reflect.Ptr || !reflect.ValueOf(payload).IsNil())
@@ -81,7 +81,16 @@ func (c *Controller) request(ctx context.Context, verb string, URL url.URL, payl
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		err = fmt.Errorf("request failed: %s", resp.Status)
+		if isErrorSupported(resp.StatusCode, supportedErrors) {
+			var extendedError Error
+			if err = json.NewDecoder(resp.Body).Decode(&extendedError); err != nil {
+				err = fmt.Errorf("unmarshalling response error as JSON failed: %v", err)
+			} else {
+				err = extendedError
+			}
+		} else {
+			err = fmt.Errorf("request failed: %s", resp.Status)
+		}
 		return
 	}
 	// Unmarshall JSON
@@ -93,4 +102,13 @@ func (c *Controller) request(ctx context.Context, verb string, URL url.URL, payl
 		err = fmt.Errorf("unmarshalling response as JSON failed: %v", err)
 	}
 	return
+}
+
+func isErrorSupported(statusCode int, supported []int) bool {
+	for _, code := range supported {
+		if statusCode == code {
+			return true
+		}
+	}
+	return false
 }
