@@ -10,12 +10,12 @@ import (
 // DomainsQuery allows to configure a Domains query.
 // https://developers.rebrandly.com/docs/domains-list-endpoint
 type DomainsQuery struct {
-	Active   *bool             `json:"active"`
-	Type     *DomainsQueryType `json:"type"`
-	OrderBy  *string           `json:"orderBy"`
-	OrderDir *string           `json:"orderDir"`
-	Limit    *int              `json:"limit"`
-	Last     *string           `json:"last"`
+	Active   *bool                 `json:"active"`
+	Type     *DomainsQueryType     `json:"type"`
+	OrderBy  *DomainsQueryOrderBy  `json:"orderBy"`
+	OrderDir *DomainsQueryOrderDir `json:"orderDir"`
+	Limit    *int                  `json:"limit"`
+	Last     *string               `json:"last"`
 }
 
 // MarshalJSON only marshal as JSON instanciate fields of DomainsQuery
@@ -47,15 +47,36 @@ func (dq *DomainsQuery) MarshalJSON() (data []byte, err error) {
 	return json.Marshal(tmp)
 }
 
-// DomainsQueryType represent a type within a DomainsQuery.
-// https://developers.rebrandly.com/docs/domains-list-endpoint
+// DomainsQueryType represent a type within a DomainsQuery
 type DomainsQueryType string
 
 const (
-	// DomainsQueryTypeUser represents the "user" type for a DomainsQueryType. https://developers.rebrandly.com/docs/domains-list-endpoint
+	// DomainsQueryTypeUser represents the "user" type for a DomainsQueryType
 	DomainsQueryTypeUser DomainsQueryType = "user"
-	// DomainsQueryTypeService represents the "service" type for DomainsQueryType. https://developers.rebrandly.com/docs/domains-list-endpoint
+	// DomainsQueryTypeService represents the "service" type for DomainsQueryType
 	DomainsQueryTypeService DomainsQueryType = "service"
+)
+
+// DomainsQueryOrderBy represent a given ordering for a DomainsQuery.
+type DomainsQueryOrderBy string
+
+const (
+	// DomainsQueryOrderByCreatedAt represents the "createdAt" ordering for a DomainsQueryOrderBy
+	DomainsQueryOrderByCreatedAt DomainsQueryOrderBy = "createdAt"
+	// DomainsQueryOrderByUpdatedAt represents the "updatedAt" ordering for a DomainsQueryOrderBy
+	DomainsQueryOrderByUpdatedAt DomainsQueryOrderBy = "updatedAt"
+	// DomainsQueryOrderByFullName represents the "fullName" ordering for a DomainsQueryOrderBy
+	DomainsQueryOrderByFullName DomainsQueryOrderBy = "fullName"
+)
+
+// DomainsQueryOrderDir represents the sorting direction for a DomainsQuery
+type DomainsQueryOrderDir string
+
+const (
+	// DomainsQueryOrderDirDesc represents the "desc" sorting direction for a DomainsQueryOrderDir
+	DomainsQueryOrderDirDesc DomainsQueryOrderDir = "desc"
+	// DomainsQueryOrderDirAsc represents the "asc" sorting direction for a DomainsQueryOrderDir
+	DomainsQueryOrderDirAsc DomainsQueryOrderDir = "asc"
 )
 
 // Domains represents a list domains
