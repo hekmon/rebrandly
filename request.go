@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"reflect"
 )
 
@@ -18,10 +19,25 @@ const (
 	apikeyHeaderName      = "apikey"
 	workspaceHeaderName   = "workspace"
 	debug                 = false
-	pipeDreamDebugging    = "https://en6uhmjiqbxd5.x.pipedream.net/v1"
+	pipeDreamDebugging    = "https://en6uhmjiqbxd5.x.pipedream.net"
 )
 
-func (c *Controller) request(ctx context.Context, verb, URI string, payload, answer interface{}) (err error) {
+var (
+	templateURL      *url.URL
+	templateDebugURL *url.URL
+)
+
+func init() {
+	var err error
+	if templateURL, err = url.Parse(baseURL); err != nil {
+		panic(fmt.Sprintf("can't parse baseURL '%s' as url.URL: %v", baseURL, err))
+	}
+	if templateDebugURL, err = url.Parse(pipeDreamDebugging); err != nil {
+		panic(fmt.Sprintf("can't parse pipeDreamDebugging '%s' as url.URL: %v", pipeDreamDebugging, err))
+	}
+}
+
+func (c *Controller) request(ctx context.Context, verb string, URL url.URL, payload, answer interface{}) (err error) {
 	var bodySource io.Reader
 	// Create payload if necessary
 	payloadUsable := payload != nil && (reflect.ValueOf(payload).Kind() != reflect.Ptr || !reflect.ValueOf(payload).IsNil())
@@ -34,13 +50,11 @@ func (c *Controller) request(ctx context.Context, verb, URI string, payload, ans
 		bodySource = bytes.NewReader(data)
 	}
 	// Create request
-	var URL string
 	if debug {
-		URL = fmt.Sprintf("%s/%s", pipeDreamDebugging, URI)
-	} else {
-		URL = fmt.Sprintf("%s/%s", baseURL, URI)
+		URL.Scheme = templateDebugURL.Scheme
+		URL.Host = templateDebugURL.Host
 	}
-	req, err := http.NewRequest(verb, URL, bodySource)
+	req, err := http.NewRequest(verb, URL.String(), bodySource)
 	if err != nil {
 		err = fmt.Errorf("can't prepare the request: %v", err)
 		return

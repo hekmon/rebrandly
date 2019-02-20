@@ -12,7 +12,15 @@ func (c *Controller) DomainsGet(filters *DomainsQuery) (domains Domains, err err
 
 // DomainsGetCtx returns the list of domains
 func (c *Controller) DomainsGetCtx(ctx context.Context, filters *DomainsQuery) (domains Domains, err error) {
-	err = c.request(ctx, "GET", "domains", filters, &domains)
+	query, err := convertStructToURLQuery(filters)
+	if err != nil {
+		err = fmt.Errorf("can't convert filters to query params: %v", err)
+		return
+	}
+	url := *templateURL
+	url.Path += "/domains"
+	url.RawQuery = query.Encode()
+	err = c.request(ctx, "GET", url, nil, &domains)
 	return
 }
 
@@ -23,7 +31,9 @@ func (c *Controller) DomainsGetByID(id string) (domain Domain, err error) {
 
 // DomainsGetByIDCtx return the domains details represented by id
 func (c *Controller) DomainsGetByIDCtx(ctx context.Context, id string) (domain Domain, err error) {
-	err = c.request(ctx, "GET", fmt.Sprintf("domains/%s", id), nil, &domain)
+	url := *templateURL
+	url.Path += fmt.Sprintf("domains/%s", id)
+	err = c.request(ctx, "GET", url, nil, &domain)
 	return
 }
 
@@ -35,7 +45,9 @@ func (c *Controller) DomainsCount(active bool, domainType string) (nbDomains int
 // DomainsCountCtx returns the number of domains
 func (c *Controller) DomainsCountCtx(ctx context.Context, active bool, domainType string) (nbDomains int, err error) {
 	var resp domainCountResponse
-	if err = c.request(ctx, "GET", "domains/count", domainCountQuery{
+	url := *templateURL
+	url.Path += "domains/count"
+	if err = c.request(ctx, "GET", url, domainCountQuery{
 		Active: active,
 		Type:   domainType,
 	}, &resp); err != nil {

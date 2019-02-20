@@ -1,57 +1,18 @@
 package rebrandly
 
 import (
-	"encoding/json"
-	"fmt"
-	"reflect"
 	"time"
 )
 
 // DomainsQuery allows to configure a Domains query.
 // https://developers.rebrandly.com/docs/domains-list-endpoint
 type DomainsQuery struct {
-	Active   *bool                 `json:"active"`
-	Type     *DomainsQueryType     `json:"type"`
-	OrderBy  *DomainsQueryOrderBy  `json:"orderBy"`
-	OrderDir *DomainsQueryOrderDir `json:"orderDir"`
-	Limit    *int                  `json:"limit"`
-	Last     *string               `json:"last"`
-}
-
-// MarshalJSON only marshal as JSON instanciate fields of DomainsQuery
-func (dq *DomainsQuery) MarshalJSON() (data []byte, err error) {
-	refType := reflect.TypeOf(*dq)
-	refValue := reflect.ValueOf(*dq)
-	tmp := make(map[string]interface{}, refType.NumField())
-	var (
-		field reflect.Value
-		key   string
-	)
-	for i := 0; i < refType.NumField(); i++ {
-		field = refValue.Field(i)
-		if field.IsNil() {
-			continue
-		}
-		key = refType.Field(i).Tag.Get("json")
-		switch typedValue := field.Elem().Interface().(type) {
-		case bool:
-			tmp[key] = typedValue
-		case DomainsQueryType:
-			tmp[key] = string(typedValue)
-		case DomainsQueryOrderBy:
-			tmp[key] = string(typedValue)
-		case DomainsQueryOrderDir:
-			tmp[key] = string(typedValue)
-		case int:
-			tmp[key] = typedValue
-		case string:
-			tmp[key] = typedValue
-		default:
-			err = fmt.Errorf("elem id %d with json key '%s' is not supported: %v", i, key, reflect.TypeOf(typedValue))
-			return
-		}
-	}
-	return json.Marshal(tmp)
+	Active   *bool                 `urlQuery:"active"`
+	Type     *DomainsQueryType     `urlQuery:"type"`
+	OrderBy  *DomainsQueryOrderBy  `urlQuery:"orderBy"`
+	OrderDir *DomainsQueryOrderDir `urlQuery:"orderDir"`
+	Limit    *int                  `urlQuery:"limit"`
+	Last     *string               `urlQuery:"last"`
 }
 
 // DomainsQueryType represent a type within a DomainsQuery
