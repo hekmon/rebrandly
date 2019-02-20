@@ -24,7 +24,8 @@ const (
 func (c *Controller) request(ctx context.Context, verb, URI string, payload, answer interface{}) (err error) {
 	var bodySource io.Reader
 	// Create payload if necessary
-	if isPayloadUseable(payload) {
+	payloadUsable := payload != nil && (reflect.ValueOf(payload).Kind() != reflect.Ptr || !reflect.ValueOf(payload).IsNil())
+	if payloadUsable {
 		var data []byte
 		if data, err = json.Marshal(payload); err != nil {
 			err = fmt.Errorf("can't marshall body data as JSON: %v", err)
@@ -48,7 +49,7 @@ func (c *Controller) request(ctx context.Context, verb, URI string, payload, ans
 		req = req.WithContext(ctx)
 	}
 	// Set headers
-	if isPayloadUseable(payload) {
+	if payloadUsable {
 		req.Header.Set(contentTypeHeaderName, jsonContentType)
 	}
 	if workspace := c.GetWorkspace(); workspace != "" {
@@ -78,8 +79,4 @@ func (c *Controller) request(ctx context.Context, verb, URI string, payload, ans
 		err = fmt.Errorf("unmarshalling response as JSON failed: %v", err)
 	}
 	return
-}
-
-func isPayloadUseable(payload interface{}) bool {
-	return payload != nil && (reflect.ValueOf(payload).Kind() != reflect.Ptr || !reflect.ValueOf(payload).IsNil())
 }
