@@ -38,16 +38,10 @@ func init() {
 }
 
 func (c *Controller) request(ctx context.Context, verb string, URL url.URL, payload, answer interface{}, supportedErrors []int) (err error) {
-	var bodySource io.Reader
 	// Create payload if necessary
-	payloadUsable := payload != nil && (reflect.ValueOf(payload).Kind() != reflect.Ptr || !reflect.ValueOf(payload).IsNil())
-	if payloadUsable {
-		var data []byte
-		if data, err = json.Marshal(payload); err != nil {
-			err = fmt.Errorf("can't marshall body data as JSON: %v", err)
-			return
-		}
-		bodySource = bytes.NewReader(data)
+	bodySource, err := createBodyReader(payload)
+	if err != nil {
+		return
 	}
 	// Create request
 	if debug {
@@ -63,7 +57,51 @@ func (c *Controller) request(ctx context.Context, verb string, URL url.URL, payl
 		req = req.WithContext(ctx)
 	}
 	// Set headers
-	if payloadUsable {
+	c.setRequestHeaders(req)
+	// Execute
+	resp, err := c.client.Do(req)
+	if err != nil {
+		err = fmt.Errorf("request execution error: %v", err)
+		return
+	}
+	defer resp.Body.Close()
+	// Handles http & api errors
+	if err = handleHTTPErrors(resp, supportedErrors); err != nil {
+		return
+	}
+	// Unmarshall JSON
+	if ct := resp.Header.Get(contentTypeHeaderName); ct != jsonContentType {
+		err = fmt.Errorf("response %s is invalid (expecting '%s'): %s", contentTypeHeaderName, jsonContentType, ct)
+		return
+	}
+	if err = json.NewDecoder(resp.Body).Decode(answer); err != nil {
+		err = fmt.Errorf("unmarshalling response as JSON failed: %v", err)
+	}
+	return
+}
+
+func createBodyReader(payload interface{}) (bodySource io.Reader, err error) {
+	if !isPayloadUsable(payload) {
+		return
+	}
+	var data []byte
+	if data, err = json.Marshal(payload); err != nil {
+		err = fmt.Errorf("can't marshall body data as JSON: %v", err)
+		return
+	}
+	bodySource = bytes.NewReader(data)
+	return
+}
+
+func isPayloadUsable(payload interface{}) bool {
+	return payload != nil && (reflect.ValueOf(payload).Kind() != reflect.Ptr || !reflect.ValueOf(payload).IsNil())
+}
+
+func (c *Controller) setRequestHeaders(req *http.Request) {
+	if req == nil {
+		return
+	}
+	if req.Body != nil && req.Body != http.NoBody {
 		req.Header.Set(contentTypeHeaderName, jsonContentType)
 	}
 	if workspace := c.GetWorkspace(); workspace != "" {
@@ -73,13 +111,9 @@ func (c *Controller) request(ctx context.Context, verb string, URL url.URL, payl
 		req.Header.Set(userAgentHeaderName, ua)
 	}
 	req.Header.Set(apikeyHeaderName, c.apiKey)
-	// Execute
-	resp, err := c.client.Do(req)
-	if err != nil {
-		err = fmt.Errorf("request execution error: %v", err)
-		return
-	}
-	defer resp.Body.Close()
+}
+
+func handleHTTPErrors(resp *http.Response, supportedErrors []int) (err error) {
 	if resp.StatusCode != http.StatusOK {
 		if isErrorSupported(resp.StatusCode, supportedErrors) {
 			var extendedError Error
@@ -91,15 +125,6 @@ func (c *Controller) request(ctx context.Context, verb string, URL url.URL, payl
 		} else {
 			err = fmt.Errorf("request failed: %s", resp.Status)
 		}
-		return
-	}
-	// Unmarshall JSON
-	if ct := resp.Header.Get(contentTypeHeaderName); ct != jsonContentType {
-		err = fmt.Errorf("response %s is invalid (expecting '%s'): %s", contentTypeHeaderName, jsonContentType, ct)
-		return
-	}
-	if err = json.NewDecoder(resp.Body).Decode(answer); err != nil {
-		err = fmt.Errorf("unmarshalling response as JSON failed: %v", err)
 	}
 	return
 }
