@@ -105,3 +105,20 @@ func (c *Controller) LinksUpdateCtx(ctx context.Context, id string, payload Link
 	err = c.request(ctx, "POST", url, payload, &link, []int{http.StatusForbidden, http.StatusNotFound})
 	return
 }
+
+// LinksDelete deletes a link identified by id.
+func (c *Controller) LinksDelete(id string) (link Link, err error) {
+	return c.LinksDeleteCtx(nil, id)
+}
+
+// LinksDeleteCtx deletes a link identified by id.
+func (c *Controller) LinksDeleteCtx(ctx context.Context, id string) (link Link, err error) {
+	if id == "" {
+		err = errors.New("id can't be empty")
+		return
+	}
+	url := *templateURL
+	url.Path += fmt.Sprintf("/links/%s", id)
+	err = c.request(ctx, "DELETE", url, nil, &link, []int{http.StatusNotFound})
+	return
+}
