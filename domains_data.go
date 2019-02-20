@@ -4,51 +4,29 @@ import (
 	"time"
 )
 
-// DomainsQuery allows to configure a Domains query.
+// DomainsFilters represents the filters used to make a Domains query.
 // https://developers.rebrandly.com/docs/domains-list-endpoint
-type DomainsQuery struct {
-	Active   *bool                 `urlQuery:"active"`
-	Type     *DomainsType          `urlQuery:"type"`
-	OrderBy  *DomainsQueryOrderBy  `urlQuery:"orderBy"`
-	OrderDir *DomainsQueryOrderDir `urlQuery:"orderDir"`
-	Limit    *int                  `urlQuery:"limit"`
-	Last     *string               `urlQuery:"last"`
+type DomainsFilters struct {
+	Active   *bool        `urlQuery:"active"`
+	Type     *DomainsType `urlQuery:"type"`
+	OrderBy  *OrderBy     `urlQuery:"orderBy"`
+	OrderDir *OrderDir    `urlQuery:"orderDir"`
+	Limit    *int         `urlQuery:"limit"`
+	Last     *string      `urlQuery:"last"`
 }
 
 // DomainsType represent a domain type
 type DomainsType string
 
 const (
-	// DomainsQueryTypeUser represents the "user" type for a DomainsType
-	DomainsQueryTypeUser DomainsType = "user"
-	// DomainsQueryTypeService represents the "service" type for DomainsType
-	DomainsQueryTypeService DomainsType = "service"
+	// DomainsTypeUser represents the "user" type for a DomainsType
+	DomainsTypeUser DomainsType = "user"
+	// DomainsTypeService represents the "service" type for DomainsType
+	DomainsTypeService DomainsType = "service"
 )
 
-// DomainsQueryOrderBy represent a given ordering for a DomainsQuery.
-type DomainsQueryOrderBy string
-
-const (
-	// DomainsQueryOrderByCreatedAt represents the "createdAt" ordering for a DomainsQueryOrderBy
-	DomainsQueryOrderByCreatedAt DomainsQueryOrderBy = "createdAt"
-	// DomainsQueryOrderByUpdatedAt represents the "updatedAt" ordering for a DomainsQueryOrderBy
-	DomainsQueryOrderByUpdatedAt DomainsQueryOrderBy = "updatedAt"
-	// DomainsQueryOrderByFullName represents the "fullName" ordering for a DomainsQueryOrderBy
-	DomainsQueryOrderByFullName DomainsQueryOrderBy = "fullName"
-)
-
-// DomainsQueryOrderDir represents the sorting direction for a DomainsQuery
-type DomainsQueryOrderDir string
-
-const (
-	// DomainsQueryOrderDirDesc represents the "desc" sorting direction for a DomainsQueryOrderDir
-	DomainsQueryOrderDirDesc DomainsQueryOrderDir = "desc"
-	// DomainsQueryOrderDirAsc represents the "asc" sorting direction for a DomainsQueryOrderDir
-	DomainsQueryOrderDirAsc DomainsQueryOrderDir = "asc"
-)
-
-// DomainsCountQuery represents the filer usable within a DomainsCount request
-type DomainsCountQuery struct {
+// DomainsCountFilters represents the filer usable within a DomainsCount request
+type DomainsCountFilters struct {
 	Active *bool        `urlQuery:"active"`
 	Type   *DomainsType `urlQuery:"active"`
 }

@@ -6,12 +6,12 @@ import (
 )
 
 // DomainsGet returns the list of domains
-func (c *Controller) DomainsGet(filters *DomainsQuery) (domains Domains, err error) {
+func (c *Controller) DomainsGet(filters *DomainsFilters) (domains Domains, err error) {
 	return c.DomainsGetCtx(nil, filters)
 }
 
 // DomainsGetCtx returns the list of domains
-func (c *Controller) DomainsGetCtx(ctx context.Context, filters *DomainsQuery) (domains Domains, err error) {
+func (c *Controller) DomainsGetCtx(ctx context.Context, filters *DomainsFilters) (domains Domains, err error) {
 	query, err := convertStructToURLQuery(filters)
 	if err != nil {
 		err = fmt.Errorf("can't convert filters to query params: %v", err)
@@ -38,12 +38,12 @@ func (c *Controller) DomainsGetByIDCtx(ctx context.Context, id string) (domain D
 }
 
 // DomainsCount returns the number of domains
-func (c *Controller) DomainsCount(filters *DomainsCountQuery) (nbDomains int, err error) {
+func (c *Controller) DomainsCount(filters *DomainsCountFilters) (nbDomains int, err error) {
 	return c.DomainsCountCtx(nil, filters)
 }
 
 // DomainsCountCtx returns the number of domains
-func (c *Controller) DomainsCountCtx(ctx context.Context, filters *DomainsCountQuery) (nbDomains int, err error) {
+func (c *Controller) DomainsCountCtx(ctx context.Context, filters *DomainsCountFilters) (nbDomains int, err error) {
 	query, err := convertStructToURLQuery(filters)
 	if err != nil {
 		err = fmt.Errorf("can't convert filters to query params: %v", err)

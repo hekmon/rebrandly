@@ -39,9 +39,9 @@ func convertStructToURLQuery(params interface{}) (values url.Values, err error) 
 			}
 		case DomainsType:
 			values.Add(key, string(typedValue))
-		case DomainsQueryOrderBy:
+		case OrderBy:
 			values.Add(key, string(typedValue))
-		case DomainsQueryOrderDir:
+		case OrderDir:
 			values.Add(key, string(typedValue))
 		case int:
 			values.Add(key, strconv.Itoa(typedValue))
