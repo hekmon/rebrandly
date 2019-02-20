@@ -2,6 +2,7 @@ package rebrandly
 
 import (
 	"context"
+	"errors"
 	"fmt"
 )
 
@@ -61,3 +62,20 @@ func (c *Controller) LinksCountCtx(ctx context.Context, filters *LinksCountFilte
 }
 
 // Links creation with GET won't supported as this is pure evil to create a ressource with GET
+
+// LinksCreate creates a link
+func (c *Controller) LinksCreate(payload LinkCreationPayload) (link Link, err error) {
+	return c.LinksCreateCtx(nil, payload)
+}
+
+// LinksCreateCtx creates a link
+func (c *Controller) LinksCreateCtx(ctx context.Context, payload LinkCreationPayload) (link Link, err error) {
+	if payload.Destination == "" {
+		err = errors.New("destination can't be empty")
+		return
+	}
+	url := *templateURL
+	url.Path += "/links"
+	err = c.request(ctx, "POST", url, payload, &link)
+	return
+}

@@ -59,3 +59,11 @@ type LinksCountFilters struct {
 type linksCountAnswer struct {
 	Count int `json:"count"`
 }
+
+// LinkCreationPayload represents the payload used to create a link
+type LinkCreationPayload struct {
+	Destination string  `json:"destination"`
+	SlashTag    string  `json:"slashtag,omitempty"`
+	Title       string  `json:"title,omitempty"`
+	Domain      *Domain `json:"domain,omitempty"`
+}
