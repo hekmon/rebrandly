@@ -36,3 +36,28 @@ func (c *Controller) LinksGetByIDCtx(ctx context.Context, id string) (link Link,
 	err = c.request(ctx, "GET", url, nil, &link)
 	return
 }
+
+// LinksCount returns the number of links
+func (c *Controller) LinksCount(filters *LinksCountFilters) (nbLinks int, err error) {
+	return c.LinksCountCtx(nil, filters)
+}
+
+// LinksCountCtx returns the number of links
+func (c *Controller) LinksCountCtx(ctx context.Context, filters *LinksCountFilters) (nbLinks int, err error) {
+	query, err := convertStructToURLQuery(filters)
+	if err != nil {
+		err = fmt.Errorf("can't convert filters to query params: %v", err)
+		return
+	}
+	var resp domainCountResponse
+	url := *templateURL
+	url.Path += "/links/count"
+	url.RawQuery = query.Encode()
+	if err = c.request(ctx, "GET", url, nil, &resp); err != nil {
+		return
+	}
+	nbLinks = resp.Count
+	return
+}
+
+// Links creation with GET won't supported as this is pure evil to create a ressource with GET

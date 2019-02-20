@@ -2,18 +2,6 @@ package rebrandly
 
 import "time"
 
-// LinksFilters represents all filters usable on Links queries
-type LinksFilters struct {
-	DomainID       *string   `urlQuery:"domain.id"`
-	DomainFullName *string   `urlQuery:"domain.fullName"`
-	SlashTag       *string   `urlQuery:"slashtag"`
-	CreatorID      *string   `urlQuery:"creator.id"`
-	OrderBy        *OrderBy  `urlQuery:"orderBy"`
-	OrderDir       *OrderDir `urlQuery:"orderDir"`
-	Limit          *int      `urlQuery:"limit"`
-	Last           *string   `urlQuery:"last"`
-}
-
 // Link represents a registered rebrandly link
 type Link struct {
 	ID            string    `json:"id"`
@@ -49,3 +37,25 @@ type Link struct {
 
 // Links represents a collection of Link
 type Links []Link
+
+// LinksFilters represents all filters usable on Links queries
+type LinksFilters struct {
+	DomainID       *string   `urlQuery:"domain.id"`
+	DomainFullName *string   `urlQuery:"domain.fullName"`
+	SlashTag       *string   `urlQuery:"slashtag"`
+	CreatorID      *string   `urlQuery:"creator.id"`
+	OrderBy        *OrderBy  `urlQuery:"orderBy"`
+	OrderDir       *OrderDir `urlQuery:"orderDir"`
+	Limit          *int      `urlQuery:"limit"`
+	Last           *string   `urlQuery:"last"`
+}
+
+// LinksCountFilters represents the filters usable on the LinksCount query
+type LinksCountFilters struct {
+	Favourite *bool   `urlQuery:"favourite"`
+	DomainID  *string `urlQuery:"domain.id"`
+}
+
+type linksCountAnswer struct {
+	Count int `json:"count"`
+}
