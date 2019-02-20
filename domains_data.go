@@ -36,12 +36,19 @@ func (dq *DomainsQuery) MarshalJSON() (data []byte, err error) {
 		switch typedValue := field.Elem().Interface().(type) {
 		case bool:
 			tmp[key] = typedValue
-		case string:
-			tmp[key] = typedValue
+		case DomainsQueryType:
+			tmp[key] = string(typedValue)
+		case DomainsQueryOrderBy:
+			tmp[key] = string(typedValue)
+		case DomainsQueryOrderDir:
+			tmp[key] = string(typedValue)
 		case int:
+			tmp[key] = typedValue
+		case string:
 			tmp[key] = typedValue
 		default:
 			err = fmt.Errorf("elem id %d with json key '%s' is not supported: %v", i, key, reflect.TypeOf(typedValue))
+			return
 		}
 	}
 	return json.Marshal(tmp)
