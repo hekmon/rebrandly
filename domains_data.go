@@ -7,14 +7,15 @@ import (
 	"time"
 )
 
-// DomainsQuery allows to configure a Domains query
+// DomainsQuery allows to configure a Domains query.
+// https://developers.rebrandly.com/docs/domains-list-endpoint
 type DomainsQuery struct {
-	Active   *bool   `json:"active"`
-	Type     *string `json:"type"`
-	OrderBy  *string `json:"orderBy"`
-	OrderDir *string `json:"orderDir"`
-	Limit    *int    `json:"limit"`
-	Last     *string `json:"last"`
+	Active   *bool             `json:"active"`
+	Type     *DomainsQueryType `json:"type"`
+	OrderBy  *string           `json:"orderBy"`
+	OrderDir *string           `json:"orderDir"`
+	Limit    *int              `json:"limit"`
+	Last     *string           `json:"last"`
 }
 
 // MarshalJSON only marshal as JSON instanciate fields of DomainsQuery
@@ -45,6 +46,17 @@ func (dq *DomainsQuery) MarshalJSON() (data []byte, err error) {
 	}
 	return json.Marshal(tmp)
 }
+
+// DomainsQueryType represent a type within a DomainsQuery.
+// https://developers.rebrandly.com/docs/domains-list-endpoint
+type DomainsQueryType string
+
+const (
+	// DomainsQueryTypeUser represents the "user" type for a DomainsQueryType. https://developers.rebrandly.com/docs/domains-list-endpoint
+	DomainsQueryTypeUser DomainsQueryType = "user"
+	// DomainsQueryTypeService represents the "service" type for DomainsQueryType. https://developers.rebrandly.com/docs/domains-list-endpoint
+	DomainsQueryTypeService DomainsQueryType = "service"
+)
 
 // Domains represents a list domains
 type Domains []Domain
