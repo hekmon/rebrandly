@@ -23,3 +23,16 @@ func (c *Controller) LinksGetCtx(ctx context.Context, filters *LinksFilters) (li
 	err = c.request(ctx, "GET", url, nil, &links)
 	return
 }
+
+// LinksGetByID returns the link details of link id.
+func (c *Controller) LinksGetByID(id string) (link Link, err error) {
+	return c.LinksGetByIDCtx(nil, id)
+}
+
+// LinksGetByIDCtx returns the link details of link id.
+func (c *Controller) LinksGetByIDCtx(ctx context.Context, id string) (link Link, err error) {
+	url := *templateURL
+	url.Path += fmt.Sprintf("/links/%s", id)
+	err = c.request(ctx, "GET", url, nil, &link)
+	return
+}
