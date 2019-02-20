@@ -67,3 +67,8 @@ type LinkCreationPayload struct {
 	Title       string  `json:"title,omitempty"`
 	Domain      *Domain `json:"domain,omitempty"`
 }
+
+type LinkUpdatePayload struct {
+	Destination string `json:"destination"`
+	Title       string `json:"title"`
+}

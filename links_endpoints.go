@@ -80,3 +80,28 @@ func (c *Controller) LinksCreateCtx(ctx context.Context, payload LinkCreationPay
 	err = c.request(ctx, "POST", url, payload, &link, []int{http.StatusForbidden, http.StatusNotFound})
 	return
 }
+
+// LinksUpdate allows to update a link title and destination by its id.
+func (c *Controller) LinksUpdate(id string, payload LinkUpdatePayload) (link Link, err error) {
+	return c.LinksUpdateCtx(nil, id, payload)
+}
+
+// LinksUpdateCtx allows to update a link title and destination by its id.
+func (c *Controller) LinksUpdateCtx(ctx context.Context, id string, payload LinkUpdatePayload) (link Link, err error) {
+	if id == "" {
+		err = errors.New("id can't be empty")
+		return
+	}
+	if payload.Title == "" {
+		err = errors.New("title can't be empty")
+		return
+	}
+	if payload.Destination == "" {
+		err = errors.New("destination can't be empty")
+		return
+	}
+	url := *templateURL
+	url.Path += fmt.Sprintf("/links/%s", id)
+	err = c.request(ctx, "POST", url, payload, &link, []int{http.StatusForbidden, http.StatusNotFound})
+	return
+}
