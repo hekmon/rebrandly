@@ -14,6 +14,7 @@ const (
 	baseURL               = "https://api.rebrandly.com/v1"
 	jsonContentType       = "application/json; charset=utf-8"
 	contentTypeHeaderName = "content-type"
+	userAgentHeaderName   = "user-agent"
 	apikeyHeaderName      = "apikey"
 	workspaceHeaderName   = "workspace"
 	debug                 = false
@@ -52,6 +53,9 @@ func (c *Controller) request(ctx context.Context, verb, URI string, payload, ans
 	}
 	if workspace := c.GetWorkspace(); workspace != "" {
 		req.Header.Set(workspaceHeaderName, workspace)
+	}
+	if ua := c.GetUserAgent(); ua != "" {
+		req.Header.Set(userAgentHeaderName, ua)
 	}
 	req.Header.Set(apikeyHeaderName, c.apiKey)
 	// Execute

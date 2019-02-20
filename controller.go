@@ -12,6 +12,8 @@ type Controller struct {
 	apiKey          string
 	workspace       string
 	workspaceAccess sync.RWMutex
+	useragent       string
+	useragentAccess sync.RWMutex
 	client          *http.Client
 }
 
@@ -42,4 +44,19 @@ func (c *Controller) SetWorkspace(workspace string) {
 	c.workspaceAccess.Lock()
 	c.workspace = workspace
 	c.workspaceAccess.Unlock()
+}
+
+// SetUserAgent allows tu customize the user agent used by the controller when performing http requests.
+func (c *Controller) SetUserAgent(ua string) {
+	c.useragentAccess.Lock()
+	c.useragent = ua
+	c.useragentAccess.Unlock()
+}
+
+// GetUserAgent returns the current user agent configured. If empty, golang default ua will be used.
+func (c *Controller) GetUserAgent() (ua string) {
+	c.useragentAccess.RLock()
+	ua = c.useragent
+	c.useragentAccess.RUnlock()
+	return
 }
