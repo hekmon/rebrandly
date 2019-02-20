@@ -11,10 +11,12 @@ import (
 )
 
 const (
-	baseURL           = "https://api.rebrandly.com/v1"
-	jsonContentType   = "application/json; charset=utf-8"
-	contentTypeHeader = "content-type"
-	debug             = false
+	baseURL               = "https://api.rebrandly.com/v1"
+	jsonContentType       = "application/json; charset=utf-8"
+	contentTypeHeaderName = "content-type"
+	apikeyHeaderName      = "apikey"
+	workspaceHeaderName   = "workspace"
+	debug                 = false
 )
 
 func (c *Controller) request(ctx context.Context, verb, URI string, payload, answer interface{}) (err error) {
@@ -39,12 +41,12 @@ func (c *Controller) request(ctx context.Context, verb, URI string, payload, ans
 	}
 	// Set headers
 	if payload != nil && (reflect.ValueOf(payload).Kind() != reflect.Ptr || !reflect.ValueOf(payload).IsNil()) {
-		req.Header.Set(contentTypeHeader, jsonContentType)
+		req.Header.Set(contentTypeHeaderName, jsonContentType)
 	}
 	if workspace := c.GetWorkspace(); workspace != "" {
-		req.Header.Set("workspace", workspace)
+		req.Header.Set(workspaceHeaderName, workspace)
 	}
-	req.Header.Set("apikey", c.apiKey)
+	req.Header.Set(apikeyHeaderName, c.apiKey)
 	// Last chance to inspect
 	if debug {
 		fmt.Printf("Rebrandly API| request:%+v\n", req)
@@ -61,8 +63,8 @@ func (c *Controller) request(ctx context.Context, verb, URI string, payload, ans
 		return
 	}
 	// Unmarshall JSON
-	if ct := resp.Header.Get(contentTypeHeader); ct != jsonContentType {
-		err = fmt.Errorf("response %s is invalid (expecting '%s'): %s", contentTypeHeader, jsonContentType, ct)
+	if ct := resp.Header.Get(contentTypeHeaderName); ct != jsonContentType {
+		err = fmt.Errorf("response %s is invalid (expecting '%s'): %s", contentTypeHeaderName, jsonContentType, ct)
 		return
 	}
 	if err = json.NewDecoder(resp.Body).Decode(answer); err != nil {
