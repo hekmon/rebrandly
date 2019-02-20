@@ -17,6 +17,7 @@ const (
 	apikeyHeaderName      = "apikey"
 	workspaceHeaderName   = "workspace"
 	debug                 = false
+	pipeDreamDebugging    = "https://en6uhmjiqbxd5.x.pipedream.net/v1"
 )
 
 func (c *Controller) request(ctx context.Context, verb, URI string, payload, answer interface{}) (err error) {
@@ -28,13 +29,16 @@ func (c *Controller) request(ctx context.Context, verb, URI string, payload, ans
 			err = fmt.Errorf("can't marshall body data as JSON: %v", err)
 			return
 		}
-		if debug {
-			fmt.Println("Rebrandly API| payload:", string(data))
-		}
 		bodySource = bytes.NewReader(data)
 	}
 	// Create request
-	req, err := http.NewRequest(verb, fmt.Sprintf("%s/%s", baseURL, URI), bodySource)
+	var URL string
+	if debug {
+		URL = fmt.Sprintf("%s/%s", pipeDreamDebugging, URI)
+	} else {
+		URL = fmt.Sprintf("%s/%s", baseURL, URI)
+	}
+	req, err := http.NewRequest(verb, URL, bodySource)
 	if err != nil {
 		err = fmt.Errorf("can't prepare the request: %v", err)
 		return
@@ -50,10 +54,6 @@ func (c *Controller) request(ctx context.Context, verb, URI string, payload, ans
 		req.Header.Set(workspaceHeaderName, workspace)
 	}
 	req.Header.Set(apikeyHeaderName, c.apiKey)
-	// Last chance to inspect
-	if debug {
-		fmt.Printf("Rebrandly API| request:%+v\n", req)
-	}
 	// Execute
 	resp, err := c.client.Do(req)
 	if err != nil {
