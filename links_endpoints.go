@@ -26,6 +26,41 @@ func (c *Controller) LinksGetCtx(ctx context.Context, filters *LinksFilters) (li
 	return
 }
 
+// LinksGetAll returns the list of links
+func (c *Controller) LinksGetAll(filters *LinksFilters) (links Links, err error) {
+	return c.LinksGetAllCtx(nil, filters)
+}
+
+// LinksGetAllCtx recursively retreive all the links (not limited by max)
+func (c *Controller) LinksGetAllCtx(ctx context.Context, filters *LinksFilters) (links Links, err error) {
+	query, err := convertStructToURLQuery(filters)
+	if err != nil {
+		err = fmt.Errorf("can't convert filters to query params: %v", err)
+		return
+	}
+	url := *templateURL
+	url.Path += "/links"
+	// Loop thru all pages
+	var page int
+	for {
+		page++
+		if page != 1 {
+			query.Set("last", links[len(links)-1].ID)
+		}
+		url.RawQuery = query.Encode()
+		var pageLinks Links
+		if err = c.request(ctx, "GET", url, nil, &pageLinks, []int{http.StatusNotFound}); err != nil {
+			err = fmt.Errorf("error at page %d: %w", page, err)
+			return
+		}
+		links = append(links, pageLinks...)
+		if len(pageLinks) == 0 {
+			break
+		}
+	}
+	return
+}
+
 // LinksGetByID returns the link details of link id.
 func (c *Controller) LinksGetByID(id string) (link Link, err error) {
 	return c.LinksGetByIDCtx(nil, id)
