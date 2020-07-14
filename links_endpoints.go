@@ -9,7 +9,7 @@ import (
 
 // LinksGet returns the list of links
 func (c *Controller) LinksGet(filters *LinksFilters) (links Links, err error) {
-	return c.LinksGetCtx(nil, filters)
+	return c.LinksGetCtx(context.Background(), filters)
 }
 
 // LinksGetCtx returns the list of links
@@ -28,7 +28,7 @@ func (c *Controller) LinksGetCtx(ctx context.Context, filters *LinksFilters) (li
 
 // LinksGetAll returns the list of links
 func (c *Controller) LinksGetAll(filters *LinksFilters) (links Links, err error) {
-	return c.LinksGetAllCtx(nil, filters)
+	return c.LinksGetAllCtx(context.Background(), filters)
 }
 
 // LinksGetAllCtx recursively retreive all the links (not limited by max)
@@ -63,7 +63,7 @@ func (c *Controller) LinksGetAllCtx(ctx context.Context, filters *LinksFilters) 
 
 // LinksGetByID returns the link details of link id.
 func (c *Controller) LinksGetByID(id string) (link Link, err error) {
-	return c.LinksGetByIDCtx(nil, id)
+	return c.LinksGetByIDCtx(context.Background(), id)
 }
 
 // LinksGetByIDCtx returns the link details of link id.
@@ -76,7 +76,7 @@ func (c *Controller) LinksGetByIDCtx(ctx context.Context, id string) (link Link,
 
 // LinksCount returns the number of links
 func (c *Controller) LinksCount(filters *LinksCountFilters) (nbLinks int, err error) {
-	return c.LinksCountCtx(nil, filters)
+	return c.LinksCountCtx(context.Background(), filters)
 }
 
 // LinksCountCtx returns the number of links
@@ -101,7 +101,7 @@ func (c *Controller) LinksCountCtx(ctx context.Context, filters *LinksCountFilte
 
 // LinksCreate creates a link
 func (c *Controller) LinksCreate(payload LinkCreationPayload) (link Link, err error) {
-	return c.LinksCreateCtx(nil, payload)
+	return c.LinksCreateCtx(context.Background(), payload)
 }
 
 // LinksCreateCtx creates a link
@@ -118,7 +118,7 @@ func (c *Controller) LinksCreateCtx(ctx context.Context, payload LinkCreationPay
 
 // LinksUpdate allows to update a link title and destination by its id.
 func (c *Controller) LinksUpdate(id string, payload LinkUpdatePayload) (link Link, err error) {
-	return c.LinksUpdateCtx(nil, id, payload)
+	return c.LinksUpdateCtx(context.Background(), id, payload)
 }
 
 // LinksUpdateCtx allows to update a link title and destination by its id.
@@ -143,7 +143,7 @@ func (c *Controller) LinksUpdateCtx(ctx context.Context, id string, payload Link
 
 // LinksDelete deletes a link identified by id.
 func (c *Controller) LinksDelete(id string) (link Link, err error) {
-	return c.LinksDeleteCtx(nil, id)
+	return c.LinksDeleteCtx(context.Background(), id)
 }
 
 // LinksDeleteCtx deletes a link identified by id.

@@ -48,13 +48,10 @@ func (c *Controller) request(ctx context.Context, verb string, URL url.URL, payl
 		URL.Scheme = templateDebugURL.Scheme
 		URL.Host = templateDebugURL.Host
 	}
-	req, err := http.NewRequest(verb, URL.String(), bodySource)
+	req, err := http.NewRequestWithContext(ctx, verb, URL.String(), bodySource)
 	if err != nil {
 		err = fmt.Errorf("can't prepare the request: %v", err)
 		return
-	}
-	if ctx != nil {
-		req = req.WithContext(ctx)
 	}
 	// Set headers
 	c.setRequestHeaders(req)

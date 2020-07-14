@@ -6,7 +6,7 @@ import (
 
 // Account returns the current account metata
 func (c *Controller) Account() (account Account, err error) {
-	return c.AccountCtx(nil)
+	return c.AccountCtx(context.Background())
 }
 
 // AccountCtx returns the current account metata

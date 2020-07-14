@@ -8,7 +8,7 @@ import (
 
 // DomainsGet returns the list of domains
 func (c *Controller) DomainsGet(filters *DomainsFilters) (domains Domains, err error) {
-	return c.DomainsGetCtx(nil, filters)
+	return c.DomainsGetCtx(context.Background(), filters)
 }
 
 // DomainsGetCtx returns the list of domains
@@ -27,7 +27,7 @@ func (c *Controller) DomainsGetCtx(ctx context.Context, filters *DomainsFilters)
 
 // DomainsGetByID return the domains details represented by id
 func (c *Controller) DomainsGetByID(id string) (domain Domain, err error) {
-	return c.DomainsGetByIDCtx(nil, id)
+	return c.DomainsGetByIDCtx(context.Background(), id)
 }
 
 // DomainsGetByIDCtx return the domains details represented by id
@@ -40,7 +40,7 @@ func (c *Controller) DomainsGetByIDCtx(ctx context.Context, id string) (domain D
 
 // DomainsCount returns the number of domains
 func (c *Controller) DomainsCount(filters *DomainsCountFilters) (nbDomains int, err error) {
-	return c.DomainsCountCtx(nil, filters)
+	return c.DomainsCountCtx(context.Background(), filters)
 }
 
 // DomainsCountCtx returns the number of domains
