@@ -38,6 +38,7 @@ Each endpoint supports golang contextes, just suffix Ctx to it: `rebapi.LinksCre
 * GET    domains - [binding doc](https://godoc.org/github.com/hekmon/rebrandly#Controller.DomainsGet) | [api doc](https://developers.rebrandly.com/docs/domains-list-endpoint)
 * GET    domains/:id - [binding doc](https://godoc.org/github.com/hekmon/rebrandly#Controller.DomainsGetByID) | [api doc](https://developers.rebrandly.com/docs/domain-details-endpoint)
 * GET    domains/count - [binding doc](https://godoc.org/github.com/hekmon/rebrandly#Controller.DomainsCount) | [api doc](https://developers.rebrandly.com/docs/count-domains-endpoint)
+* GET    workspaces - [binding doc](https://godoc.org/github.com/hekmon/rebrandly#Controller.Workspaces) | [api doc](https://developers.rebrandly.com/docs/workspaces)
 
 ### Advanced endpoints
 
